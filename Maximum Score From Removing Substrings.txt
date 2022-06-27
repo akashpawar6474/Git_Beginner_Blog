@@ -1,0 +1,64 @@
+class Solution:
+    def maximumGain(self, s: str, x: int, y: int) -> int:
+        """
+        If current element is b
+        and stack top is a
+            then pop from the stack and add x points
+        if current element is a
+        and stack top is b
+            then pop from the stack and add y points
+        add current element to the stack
+        
+        cdbcb ba aa ba b
+        cdbc      a    b
+             
+        so idea is to perform the operation first which have max cost
+        """
+        def liquidateBA(s,y):
+            remainingStringStack = []
+            ans = 0
+            for ch in s:
+                if ch == 'a' and remainingStringStack and remainingStringStack[-1] == 'b':
+                    remainingStringStack.pop()
+                    ans += y
+                else:
+                    remainingStringStack.append(ch)
+            return remainingStringStack,ans
+        
+        def liquidateAB(s,x):
+            remainingStringStack = []
+            ans = 0
+            for ch in s:
+                if ch == 'b' and remainingStringStack and remainingStringStack[-1] == 'a':
+                    remainingStringStack.pop()
+                    ans += x
+                else:
+                    remainingStringStack.append(ch)
+            return remainingStringStack,ans
+            
+        ans = 0
+        if x > y:
+            remainingStr,abVal = liquidateAB(s,x)
+            ans += abVal
+            remainingStr,baVal = liquidateBA(remainingStr,y)
+            ans += baVal
+        else:
+            remainingStr,baVal = liquidateBA(s,y)
+            ans += baVal
+            remainingStr,abVal = liquidateAB(remainingStr,x)
+            ans += abVal
+        return ans
+            
+        def firstTry(s,x,y):
+            stack = []
+            ans = 0
+            for ch in s:
+                if ch == 'a' and stack and stack[-1] == 'b':
+                    stack.pop()
+                    ans += x
+                if ch == 'b' and stack and stack[-1] == 'a':
+                    stack.pop()
+                    ans += y
+                else:
+                    stack.append(ch)
+            return ans
